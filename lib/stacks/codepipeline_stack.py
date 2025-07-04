@@ -25,10 +25,10 @@ class CodePipelineStack(Stack):
                 ),
                 commands=[
                     "curl -LsSf https://astral.sh/uv/install.sh | sh",
-                    "export PATH=$HOME/.cargo/bin:$PATH",
+                    "export PATH=$HOME/.local/bin:$PATH",
                     "uv sync --no-dev",
                     "npm install -g aws-cdk",
-                    "cdk synth",
+                    "npx cdk synth",
                 ],
             ),
         )
