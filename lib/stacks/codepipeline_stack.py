@@ -1,5 +1,10 @@
 from aws_cdk import Stack
-from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep
+from aws_cdk.pipelines import (
+    CodePipeline,
+    CodePipelineSource,
+    ShellStep,
+    ManualApprovalStep,
+)
 from constructs import Construct
 from lib.stages.codepipeline_app_stage import PipelineAppStage
 
@@ -18,10 +23,20 @@ class CodePipelineStack(Stack):
                     "ducchung2444/code-pipeline-cicd",
                     "master",
                 ),
-                commands=["npm ci", "npm run build", "npx cdk synth"],
+                commands=[
+                    "curl -LsSf https://astral.sh/uv/install.sh | sh",
+                    "export PATH=$HOME/.cargo/bin:$PATH",
+                    "uv sync --no-dev",
+                    "npm install -g aws-cdk",
+                    "cdk synth",
+                ],
             ),
         )
-        test_stage = my_pipeline.add_stage(PipelineAppStage(self, "TestStage", env=kwargs.get("env")))
+        test_stage = my_pipeline.add_stage(
+            PipelineAppStage(self, "TestStage", env=kwargs.get("env"))
+        )
         test_stage.add_post(ManualApprovalStep("ManualApproval"))
-        
-        my_pipeline.add_stage(PipelineAppStage(self, "ProdStage", env=kwargs.get("env")))
+
+        my_pipeline.add_stage(
+            PipelineAppStage(self, "ProdStage", env=kwargs.get("env"))
+        )
